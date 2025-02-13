@@ -15,20 +15,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: "22.x"
-
-      - name: npm install, build, and test
+      - name: Use Bun
+        uses: oven-sh/setup-bun@v
+      - name: bun install, and start
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          bun install
+          bun run build
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip release.zip ./app
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -54,7 +49,7 @@ jobs:
 
       - name: "Deploy to Azure Web App"
         id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
           app-name: "webapp-dev-newsletter-gwc-saschao"
           slot-name: "Production"
